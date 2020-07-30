@@ -1,0 +1,7 @@
+version: "2"
+
+syncs:
+  sync-volume:
+    src: "./src"
+  sync-nginx-volume:
+    src: "./nginx"

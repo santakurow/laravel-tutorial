@@ -1,0 +1,77 @@
+version: "3"
+
+networks:
+  laravel2:
+
+services:
+  web:
+    image: nginx:stable-alpine
+    container_name: nginx
+    volumes: 
+      - ./src:/var/www/html
+      - ./nginx:/etc/nginx/conf.d/
+    depends_on: 
+      - app
+      - db
+    ports: 
+      - "8080:80"
+    networks:
+      - laravel2
+
+  db:
+    image: mysql:5.7.31
+    restart: unless-stopped
+    tty: true
+    environment: 
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports: 
+      - "3306:3306"
+    networks: 
+      - laravel2
+
+  app:
+    build: .
+    container_name: php
+    volumes: 
+      - ./src:/var/www/html
+    ports: 
+      - "9000:9000"
+    networks: 
+      - laravel2
+
+  composer:
+    image: composer:latest
+    container_name: composer
+    volumes: 
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    depends_on: 
+      - app
+    networks: 
+      - laravel2
+
+  npm:
+    image: node:13.7
+    container_name: npm
+    volumes: 
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: ["npm"]
+
+  artisan:
+    build: .
+    container_name: artisan
+    volumes: 
+      - ./src:/var/www/html
+    depends_on: 
+      - db
+    working_dir: /var/www/html/
+    entrypoint: ["php", "/var/www/html/artisan"]
+    networks: 
+      - laravel2
+
