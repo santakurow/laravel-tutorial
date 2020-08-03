@@ -52,12 +52,7 @@ class User extends Authenticatable
       }
     }
 
-    // public function setPasswordAttribute($password) {
-    //   $this->attributes["password"] = bcrypt($password);
-    // }
-    
-    // public function getNameAttribute($name)
-    // {
-    //   return ucfirst($name);
-    // }
+    public function todos() {
+      return $this->hasMany(Todo::class);
+    }
 }
